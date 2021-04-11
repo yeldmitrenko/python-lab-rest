@@ -1,21 +1,10 @@
 from flask import Flask, request, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-import json
 import copy
 
-with open('secret.json') as f:
-    SECRET = json.load(f)
-
-DB_URI = "mysql+mysqlconnector://{user}:{password}@{host}:{port}/{db}".format(
-    user=SECRET["user"],
-    password=SECRET["password"],
-    host=SECRET["host"],
-    port=SECRET["port"],
-    db=SECRET['db'])
-
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+mysqlconnector://{root}:{12345678}@{127.0.0.1}:{3306}/{iot-test-db}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
@@ -53,8 +42,7 @@ def add_scenery():
 @app.route("/scenery", methods=["GET"])
 def get_scenery():
     all_scenery = Scenery.query.all()
-    result = scenery_examples_schema.dump(all_scenery)
-    return jsonify({'scenery': result})
+    return scenery_examples_schema.jsonify(all_scenery)
 
 
 @app.route("/scenery/<id>", methods=["GET"])
