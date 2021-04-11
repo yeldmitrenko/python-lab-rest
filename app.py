@@ -4,7 +4,7 @@ from flask_marshmallow import Marshmallow
 import copy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+mysqlconnector://{root}:{12345678}@{127.0.0.1}:{3306}/{iot-test-db}"
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+mysqlconnector://root:12345678@localhost/iot-test-db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
