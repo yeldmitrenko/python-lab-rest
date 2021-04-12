@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from marshmallow import fields
+import json
 import copy
 
 app = Flask(__name__)
@@ -19,8 +21,10 @@ class Scenery(db.Model):
 
 
 class ScenerySchema(ma.Schema):
-    class Meta:
-        fields = ('amount', 'price', 'installation_time_in_days', 'film_type')
+    amount = fields.Integer()
+    price = fields.Integer()
+    installation_time_in_days = fields.Integer()
+    film_type = fields.Str()
 
 
 scenery_example_schema = ScenerySchema()
