@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from marshmallow import fields
+from marshmallow import fields, post_load
 import json
 import copy
 
@@ -19,12 +19,22 @@ class Scenery(db.Model):
     installation_time_in_days = db.Column(db.Integer, unique=False)
     film_type = db.Column(db.String(20), unique=False)
 
+    def __init__(self, amount, price, installation_time_in_days, film_type):
+        self.amount = amount
+        self.price = price
+        self.installation_time_in_days = installation_time_in_days
+        self.film_type = film_type
+
 
 class ScenerySchema(ma.Schema):
     amount = fields.Integer()
     price = fields.Integer()
     installation_time_in_days = fields.Integer()
     film_type = fields.Str()
+
+    @post_load
+    def make_scenery(self, data, **kwargs):
+        return Scenery(**data)
 
 
 scenery_example_schema = ScenerySchema()
@@ -33,20 +43,17 @@ scenery_examples_schema = ScenerySchema(many=True)
 
 @app.route("/scenery", methods=["POST"])
 def add_scenery():
-    scenery = Scenery(amount=request.json["amount"],
-                      price=request.json["price"],
-                      installation_time_in_days=request.json["installation_time_in_days"],
-                      film_type=request.json["film_type"])
-
+    scenery = scenery_example_schema.load(request.json)
     db.session.add(scenery)
     db.session.commit()
-    return scenery_example_schema.jsonify(scenery)
+    return scenery_example_schema.jsonify(request.json)
 
 
 @app.route("/scenery", methods=["GET"])
 def get_scenery():
     all_scenery = Scenery.query.all()
-    return scenery_examples_schema.jsonify(all_scenery)
+    result = scenery_examples_schema.dump(all_scenery)
+    return jsonify(result)
 
 
 @app.route("/scenery/<id>", methods=["GET"])
