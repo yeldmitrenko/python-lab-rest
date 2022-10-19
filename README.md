@@ -1,4 +1,4 @@
-# Python_Lab_6
+# Python_Lab_REST
 
 ### Task:
  - Implement REST service (GET/POST/PUT/DELETE requests) for one of the classes from 3rd lab.
